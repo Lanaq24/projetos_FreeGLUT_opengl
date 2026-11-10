@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1794330391 source:c:\users\w10\modelagem3d\projetos-opengl\animacao_quadrado_retangulo\animacao_quadrado_retangulo\main.cpp
+	<windows.h>
+	<GL/freeglut.h>
+	<stdio.h>
+
+1426360528 c:\users\w10\modelagem3d\freeglut\include\gl\freeglut.h
+	"freeglut_std.h"
+	"freeglut_ext.h"
+
+1426360528 c:\users\w10\modelagem3d\freeglut\include\gl\freeglut_std.h
+	<windows.h>
+	<EGL/egl.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+
+1426360528 c:\users\w10\modelagem3d\freeglut\include\gl\freeglut_ext.h
+	<stdarg.h>
+
