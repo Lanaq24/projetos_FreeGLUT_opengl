@@ -1,130 +1,105 @@
-#include <windows.h>
-#include <GL/freeglut.h>
-#include <math.h>
-#include <stdio.h>
 
-// Posição e raio do Círculo (movido pelas setas)
-GLfloat cx = 100.0f;
-GLfloat cy = 200.0f;
-GLfloat circleRadius = 25.0f;
-GLfloat circleSpeed = 10.0f;
+#ifdef __APPLE__
+#include <GLUT/freeglut.h>
+#else
+#include <GL/glut.h>
+#endif
 
-// Posição e tamanho do Quadrado que representa o Gol
-GLfloat goalX = 450.0f;
-GLfloat goalY = 200.0f;
-GLsizei goalSize = 80;
+#include <stdlib.h>
 
-GLfloat windowWidth;
-GLfloat windowHeight;
+float alpha = 0;
+float beta = 0;
+float delta = 1;
 
-// Variável para controlar para não floodar a mensagem no console a cada quadro
-int golMarcado = 0;
+void init() {
+     glClearColor(0, 0, 0, 0);
+     glEnable(GL_DEPTH_TEST);
+     glMatrixMode(GL_PROJECTION);
+     glLoadIdentity();
+     glOrtho(-200, 200, -300, 300, -200, 200);
+ }
 
-// Função para desenhar um círculo preenchido
-void DesenhaCirculo(GLfloat x, GLfloat y, GLfloat raio, int num_segments) {
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(x, y); // Centro do círculo
-    for (int i = 0; i <= num_segments; i++) {
-        GLfloat theta = 2.0f * 3.1415926f * (GLfloat)i / (GLfloat)num_segments;
-        GLfloat px = raio * cosf(theta);
-        GLfloat py = raio * sinf(theta);
-        glVertex2f(x + px, y + py);
-    }
-    glEnd();
-}
+void display() {
+     glClearColor(0.0, 0.0, 0.0, 0.0);
+     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-// Função de Detecção de Colisão (Círculo vs Quadrado do Gol)
-void VerificaGol() {
-    GLfloat goalLeft = goalX;
-    GLfloat goalRight = goalX + goalSize;
-    GLfloat goalBottom = goalY;
-    GLfloat goalTop = goalY + goalSize;
-
-    GLfloat circLeft = cx - circleRadius;
-    GLfloat circRight = cx + circleRadius;
-    GLfloat circBottom = cy - circleRadius;
-    GLfloat circTop = cy + circleRadius;
-
-    // Verifica se o círculo encostou/entrou na área do quadrado do gol
-    if (circRight >= goalLeft && circLeft <= goalRight && circTop >= goalBottom && circBottom <= goalTop) {
-        if (!golMarcado) {
-            printf("\n GOOOOOOL! O circulo acertou o gol! \n");
-            golMarcado = 1; // Marca que o gol foi feito nesta jogada
-        }
-    } else {
-        golMarcado = 0; // Reseta quando o círculo sai de dentro do gol
-    }
-}
-
-void Desenha(void)
-{
      glMatrixMode(GL_MODELVIEW);
      glLoadIdentity();
 
-     glClear(GL_COLOR_BUFFER_BIT);
+     glRotatef(beta, 0, 1, 0);
+     glRotatef(alpha, 1, 0, 0);
+     glScalef(delta, delta, delta);
+     glColor3f(1, 1,0);
+     glPushMatrix();
+     glTranslatef( -100, 0, 0);
+     glutWireSphere(10.0f, 50, 30);
+     glPopMatrix();
 
-     // Desenha o Quadrado do Gol (Verde)
-     glColor3f(0.0f, 1.0f, 0.0f);
-     glBegin(GL_QUADS);
-            glVertex2i(goalX, goalY + goalSize);
-            glVertex2i(goalX, goalY);
-            glVertex2i(goalX + goalSize, goalY);
-            glVertex2i(goalX + goalSize, goalY + goalSize);
-     glEnd();
 
-     // Desenha o Círculo controlado pelas setas (Amarelo)
-     glColor3f(1.0f, 1.0f, 0.0f);
-     DesenhaCirculo(cx, cy, circleRadius, 30);
+     glTranslatef( 0, -15, 0);
+     glPushMatrix();
+     glScalef(4, 0.1f, 4);
+     glColor3f(0, 1, 0.05);
+     //glLoadIdentity();
+     glutSolidCube(80.0f);
+     glPopMatrix();
+     glLineWidth(10);
+    glColor3f(1,1,1);
+     glBegin(GL_LINES);
+        glVertex3f(150, 0, -50);
+        glVertex3f(150,100,-50);
 
-     // Verifica se ocorreu o gol
-     VerificaGol();
+        glVertex3f(150,0,50);
+        glVertex3f(150,100,50);
 
-     glutSwapBuffers();
-}
+        glVertex3f(150,100, -50);
+        glVertex3f(150, 100, 50);
 
-// Função para capturar as setas direcionais do teclado
-void TeclasEspeciais(int key, int x, int y) {
-    switch (key) {
-        case GLUT_KEY_UP:
-            cy += circleSpeed;
-            if (cy > windowHeight - circleRadius) cy = windowHeight - circleRadius;
-            break;
-        case GLUT_KEY_DOWN:
-            cy -= circleSpeed;
-            if (cy < circleRadius) cy = circleRadius;
-            break;
-        case GLUT_KEY_LEFT:
-            cx -= circleSpeed;
-            if (cx < circleRadius) cx = circleRadius;
-            break;
-        case GLUT_KEY_RIGHT:
-            cx += circleSpeed;
-            if (cx > windowWidth - circleRadius) cx = windowWidth - circleRadius;
-            break;
-    }
-    glutPostRedisplay();
-}
 
-void AlteraTamanhoJanela(GLsizei w, GLsizei h)
+        glEnd();
+
+
+     glFlush();
+ }
+
+void keyboard(unsigned char key, int x, int y)
 {
-     glViewport(0, 0, w, h);
-     glMatrixMode(GL_PROJECTION);
-     glLoadIdentity();
-     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-     windowWidth = w;
-     windowHeight = h;
-     gluOrtho2D(0.0f, windowWidth, 0.0f, windowHeight);
+     if(key == 'q')
+        delta = delta * 1.1f;
+     if(key == 'w')
+        delta = delta * 0.9f;
+     glutPostRedisplay();
+ }
+
+ void  listeningSpKey (GLint tecla,
+                    GLint x, GLint y) {
+	switch(tecla) {
+		case GLUT_KEY_UP:
+		        alpha = alpha - 1;
+				break;
+		case GLUT_KEY_DOWN:
+		        alpha = alpha + 1;
+				break;
+		case GLUT_KEY_LEFT:
+		        beta = beta + 1;
+				break;
+		case GLUT_KEY_RIGHT:
+		        beta = beta - 1;
+				break;
+	}
+	glutPostRedisplay();
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv)
+ {
      glutInit(&argc, argv);
-     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-     glutInitWindowSize(640, 480);
-     glutInitWindowPosition(10, 10);
-     glutCreateWindow("Jogo do Gol - FreeGLUT");
-     glutDisplayFunc(Desenha);
-     glutReshapeFunc(AlteraTamanhoJanela);
-     glutSpecialFunc(TeclasEspeciais);
+     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+     glutInitWindowPosition(100, 100);
+     glutInitWindowSize(400, 400);
+     glutCreateWindow("Exemplo Esfera 3D Transformação");
+     init();
+     glutKeyboardFunc(keyboard);
+     glutSpecialFunc(listeningSpKey);
+     glutDisplayFunc(display);
      glutMainLoop();
-}
+ }

@@ -1,6 +1,6 @@
 # depslib dependency file v1.0
-1189868560 source:c:\users\w10\modelagem3d\projetos-opengl\gol\gol\main.cpp
-	<GLUT/glut.h>
+1794410684 source:c:\users\w10\modelagem3d\projetos-opengl\gol\gol\main.cpp
+	<GLUT/freeglut.h>
 	<GL/glut.h>
 	<stdlib.h>
 
